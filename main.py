@@ -34,15 +34,6 @@ def category_image(filepath):
     return category_name
 
 
-# @app.get("/results/{width}/{height}/{category}", response_class=HTMLResponse)
-# async def test_result(request: Request, width: int, height: int, category: str):
-#     return templates.TemplateResponse("app.html", context={"request": request,
-#                                                            "header": "Добро пожаловать",
-#                                                            "width": width,
-#                                                            "height": height,
-#                                                            "category": category})
-
-
 @app.post("/")
 async def test_form(images: UploadFile):
     with open('static/' + images.filename, "wb") as wf:
@@ -53,16 +44,6 @@ async def test_form(images: UploadFile):
     im.close()
     category = category_image('static/' + images.filename)
     return width, height, category
-
-
-# @app.post("/send")
-# async def classify(request: Request, images: UploadFile):
-#     # contents = await file.read()
-#     print("test changes")
-#     print(images)
-#     return 200
-#     # print(arg2.decode('utf-8'))
-#     # return templates.TemplateResponse("app.html", context={"request": request, "header": "Добро пожаловать"})
 
 
 @app.get("/", response_class=HTMLResponse)

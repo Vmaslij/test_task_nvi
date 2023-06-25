@@ -130,8 +130,6 @@
         border-radius: 0 8px 8px 0;
     }
     table tbody td {
-        /*text-align: left;*/
-        /*font-family: 'Inter', sans-serif;*/
         border: none;
         padding: 10px 15px;
         font-size: 16px;
@@ -199,16 +197,8 @@
         contentType: false,
         processData: false,
         success: function(data) {
-            console.log(data);
-            let pwth = $('#pic-width');
-            let phth = $('#pic-height');
-            let pcat = $('#pic-category');
-            pwth = data[0];
-            phth = data[1];
-            pcat = data[2];
             let table = $('#result-table');
             table.append("<tr><td>"+data[0]+"</td><td>"+data[1]+"</td><td>"+data[2]+"</td></tr>")
-            console.log(pwth, phth, pcat);
      }
     });
 
