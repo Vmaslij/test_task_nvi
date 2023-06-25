@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Тестовое задание</title>
+    <script type="text/javascript" src="https://yastatic.net/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+    <p>
+        <div align="center">
+            <h1>{{ header }}</h1>
+        </div>
+    </p>
+    <p>
+
+        <form id="upload-container" action="" method="post">
+            <img id="upload-image" src="../static/upload.svg">
+            <div>
+                <input id="file-input" type="file" name="filename">
+                <br>
+                <label for="file-input">Выберите файл</label>
+                <span>или перетащите его сюда</span>
+            </div>
+        </form>
+    </p>
+    <table id="result-table">
+        <thead>
+            <tr>
+                <th>
+                    Ширина
+                </th>
+                <th>
+                    Высота
+                </th>
+                <th>
+                    Результат
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="pic-height">
+                    {{ width }}
+                </td>
+                <td id="pic-width">
+                    {{ height }}
+                </td>
+                <td id="pic-category">
+                    {{ category }}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+<style>
+    body {
+         padding: 0;
+         margin: 0;
+         display: flex;
+         flex-direction: column;
+         justify-content: center;
+         align-items: center;
+         min-height: 50vh;
+    }
+
+    #upload-container {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         flex-direction: column;
+         width: 400px;
+         height: 400px;
+         outline: 2px dashed #5d5d5d;
+         outline-offset: -12px;
+         background-color: #e0f2f7;
+         font-family: 'Segoe UI';
+         color: #1f3c44;
+    }
+
+    #upload-container img {
+         width: 40%;
+         margin-bottom: 20px;
+         user-select: none;
+    }
+
+    #upload-container label {
+         font-weight: bold;
+    }
+
+    #upload-container div {
+         position: relative;
+         z-index: 10;
+    }
+
+    #upload-container input[type=file] {
+         width: 0.1px;
+         height: 0.1px;
+         opacity: 0;
+         position: absolute;
+         z-index: -10;
+    }
+
+    #upload-container label:hover {
+         cursor: pointer;
+         text-decoration: underline;
+    }
+
+    #upload-container.dragover {
+         background-color: #fafafa;
+         outline-offset: -17px;
+    }
+    table {
+        font-family: 'Inter', sans-serif;
+        text-align: center;
+        width: 50%;
+        border: none;
+        margin-bottom: 20px;
+    }
+    table thead th {
+        font-weight: bold;
+        /*text-align: left;*/
+        border: none;
+        padding: 10px 15px;
+        background: rgba(133, 89, 201, 0.8);
+        font-size: 18px;
+    }
+    table thead tr th:first-child {
+        border-radius: 8px 0 0 8px;
+    }
+    table thead tr th:last-child {
+        border-radius: 0 8px 8px 0;
+    }
+    table tbody td {
+        /*text-align: left;*/
+        /*font-family: 'Inter', sans-serif;*/
+        border: none;
+        padding: 10px 15px;
+        font-size: 16px;
+        outline: none;
+        text-decoration: none;
+        vertical-align: top;
+    }
+    table tbody tr:nth-child(even){
+        background: rgba(133, 89, 201, 0.2);
+    }
+    table tbody tr td:first-child {
+        border-radius: 8px 0 0 8px;
+    }
+    table tbody tr td:last-child {
+        border-radius: 0 8px 8px 0;
+    }
+</style>
+</body>
+<script>
+    var dropZone = $('#upload-container');
+
+    dropZone.on('drag dragstart dragend dragover dragenter dragleave drop', function(){
+         return false;
+    });
+
+    dropZone.on('dragover dragenter', function() {
+         dropZone.addClass('dragover');
+    });
+
+    dropZone.on('dragleave', function(e) {
+         dropZone.removeClass('dragover');
+    });
+
+    dropZone.on('drop', function(e) {
+        dropZone.removeClass('dragover');
+        let file = e.originalEvent.dataTransfer.files;
+        sendFile(file);
+    });
+
+    $('#file-input').change(function() {
+        let file = this.files;
+        sendFile(file);
+    });
+
+
+
+    function sendFile(files) {
+        let maxFileSize = 10485760;
+        let Data = new FormData();
+        let elements = 0;
+        $(files).each(function(index, file) {
+            if ((file.size <= maxFileSize) && ((file.type === 'image/png') || (file.type === 'image/jpeg'))) {
+                Data.append('images', file);
+                elements++;
+            }
+        });
+        if (elements === 0){
+            alert("Файл слишком большой или формат файла не PNG/JPEG");
+            return -1;
+        }
+        $.ajax({
+        url: dropZone.attr('action'),
+        type: dropZone.attr('method'),
+        data: Data,
+        contentType: false,
+        processData: false,
+        success: function(data) {
+            console.log(data);
+            let pwth = $('#pic-width');
+            let phth = $('#pic-height');
+            let pcat = $('#pic-category');
+            pwth = data[0];
+            phth = data[1];
+            pcat = data[2];
+            let table = $('#result-table');
+            table.append("<tr><td>"+data[0]+"</td><td>"+data[1]+"</td><td>"+data[2]+"</td></tr>")
+            console.log(pwth, phth, pcat);
+     }
+    });
+
+    };
+</script>
+</html>
